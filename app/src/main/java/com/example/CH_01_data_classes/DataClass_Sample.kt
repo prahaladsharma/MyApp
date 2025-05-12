@@ -348,3 +348,96 @@ Conclusion:-
 * The automatic generation of methods such as equals(), hashCode(), toString(), copy(), 
   and component functions significantly reduces boilerplate code and enhances the functionality and usability of data classes.
 * These features help developers efficiently manage immutable data objects and perform common operations with minimal effort.
+
+-----------
+Singleton:-
+-----------
+⚔️ Why Data Class ≠ Singleton
+* Data classes are designed for mutability and instantiation—you usually create multiple copies of them (especially with .copy()).
+* They are not inherently singleton. Every time you do User("1", "John"), a new object is created.
+* Singletons should have one instance, whereas data classes support multiple distinct instances by design.
+
+🧠 When Might You Combine Them?
+* While it's unusual, if you ever want to enforce a singleton data holder, you can wrap the data class inside an object:
+    data class Config(val endpoint: String)
+
+    object ConfigManager {
+        var config: Config? = null
+    }
+* But again, the data class itself isn't a singleton—you're just storing its instance inside a singleton container.
+
+✅ Summary:--
+| Concept       | Singleton                     | Data Class                  |
+| ------------- | ----------------------------- | --------------------------- |
+| Purpose       | Single instance               | Hold structured data        |
+| Instantiation | One instance only             | Multiple instances allowed  |
+| Common Usage  | Logger, Config, Cache Manager | Models, DTOs, State Objects |
+| Keyword       | `object`                      | `data class`                |
+
+
+-----------------
+🔠 SOLID Principle:-
+----------------
+✅ 1. Single Responsibility Principle (SRP)
+* Definition: A class should have one and only one reason to change.
+* In Context of Data Class: A data class should only hold data—not logic.
+  Good example:
+    data class User(val id: Int, val name: String)
+    ❌ Avoid doing this:
+
+    data class User(val id: Int, val name: String) {
+        fun calculateScore() { ... } // Logic not related to data structure
+    }
+👉 Tip: Keep your business logic in use cases or domain/service classes.
+
+✅ 2. Open/Closed Principle (OCP)
+* Definition: A class should be open for extension, but closed for modification.
+* In Context of Data Class: data class is final by default, so it's not open for inheritance.
+* If you want to extend its behavior, prefer composition over inheritance.
+    Example:
+        data class User(val id: Int, val name: String)
+        class UserFormatter(private val user: User) {
+            fun formattedName() = "User: ${user.name}"
+        }
+
+✅ 3. Liskov Substitution Principle (LSP)
+* Definition: Subtypes must be substitutable for their base types.
+* In Context of Data Class: Since data classes can't be subclassed (unless marked open), LSP doesn't directly apply.
+* You can implement interfaces, though:
+        interface Person {
+            val name: String
+        }
+* data class User(override val name: String): Person
+
+✅ 4. Interface Segregation Principle (ISP)
+* Definition: Clients should not be forced to depend on interfaces they don't use.
+* In Context of Data Class:
+* Don’t implement large interfaces in a data class just to conform.
+* Only implement what the data class truly represents.
+    Example:
+        interface Identifiable {
+            val id: Int
+        }
+        data class Product(override val id: Int, val name: String): Identifiable
+
+✅ 5. Dependency Inversion Principle (DIP)
+* Definition: High-level modules should not depend on low-level modules. Both should depend on abstractions.
+* In Context of Data Class: A data class can be used as a DTO or model that's injected via interfaces.
+    Example:
+        interface UserRepository {
+            fun getUser(): User
+        }
+
+        class RemoteUserRepo : UserRepository {
+            override fun getUser() = User(1, "Prahalad")
+        }
+
+🧠 Summary Table
+| SOLID Principle | Relevance to Data Class                 | Best Practice                                |
+| --------------- | --------------------------------------- | -------------------------------------------- |
+| SRP             | ✅ Keep only data, no logic              | Structure-only usage                         |
+| OCP             | ⚠️ Final by default; prefer composition | Extend externally                            |
+| LSP             | ✅ Interfaces can help                   | Implement minimal interfaces                 |
+| ISP             | ✅ Avoid bloated interfaces              | Use focused, relevant interfaces             |
+| DIP             | ✅ Use via abstractions                  | Inject via interface for flexibility/testing |
+
