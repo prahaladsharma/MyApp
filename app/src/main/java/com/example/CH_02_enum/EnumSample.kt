@@ -65,10 +65,10 @@ They are useful when a variable can only take one out of a small set of possible
 
 🛠 4. SOLID Principles & Enums
 * S - Single Responsibility: ✅ Enum handles a single responsibility — modeling a group of related constants.
-* O - Open/Closed: ✅ Open for use (with methods, interfaces), closed for modification (cannot add enums at runtime).
-* L - Liskov Substitution: ✅ An enum can substitute an interface it's implementing.
+* O - Open/Closed:           ✅ Open for use (with methods, interfaces), closed for modification (cannot add enums at runtime).
+* L - Liskov Substitution:   ✅ An enum can substitute an interface it's implementing.
 * I - Interface Segregation: ✅ Enums can implement specific interfaces.
-* D - Dependency Inversion: ✅ Enums can be injected as dependencies via interfaces, helping inversion.
+* D - Dependency Inversion:  ✅ Enums can be injected as dependencies via interfaces, helping inversion.
 
 🔂 5. Enum vs Singleton
 * Each enum constant is a Singleton.
@@ -232,41 +232,44 @@ enum class Role{
   ADMIN, USER, GUEST
 }
 Example of enum :-
-enum class Operation{
-  ADD{
-    override fun apply(x:Int, y:Int) = x + y
-  },
-  SUBTRACT{
-    override fun apply(x:Int, y:Int) = x y
-  };
+      enum class Operation{
+        ADD{
+          override fun apply(x:Int, y:Int) = x + y
+        },
+        SUBTRACT{
+          override fun apply(x:Int, y:Int) = x y
+        };
 
-  abstract fun apply(x: Int, y: Int)
-}
+        abstract fun apply(x: Int, y: Int)
+      }
 
-fun main(){
-  val x: Int = 5
-  val y: Int = 5
-  val result = Operation.ADD.apply(x, y)
-  println(result)
-}
-interface Descriable{
-  fun desc(): String
-}
+      fun main(){
+        val x: Int = 5
+        val y: Int = 5
+        val result = Operation.ADD.apply(x, y)
+        println(result)
+      }
 
-enum class TrafficLight: Descriable{
-  RED{
-    override fun desc() = "Stop"
-  },
-  GREEN{
-    override fun desc() = "Go"
-  },
-  YELLOW{
-    override fun desc() = "Caution"
-  };
-}
 
-fun main(){
-  TrafficLight.values().forEach{
-    println("${it.name}: ${it.desc()}")
-  }
-}        
+Example:-
+      interface Descriable{
+        fun desc(): String
+      }
+
+      enum class TrafficLight: Descriable{
+        RED{
+          override fun desc() = "Stop"
+        },
+        GREEN{
+          override fun desc() = "Go"
+        },
+        YELLOW{
+          override fun desc() = "Caution"
+        };
+      }
+
+      fun main(){
+        TrafficLight.values().forEach{
+          println("${it.name}: ${it.desc()}")
+        }
+      }        
